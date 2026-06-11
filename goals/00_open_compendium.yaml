@@ -1,0 +1,4 @@
+- step: "Open the Compendium section of the app"
+  type: manual
+  action: "click id"
+  id: "bottom_bar_item_compendio"

@@ -1,1 +1,0 @@
-Go to the profile section. Verify the labels are in english. Change the language to Italian and verify the labels are in italian.

@@ -1,1 +1,0 @@
-Identify and visit all main sections of the app using the bottom_bar buttons

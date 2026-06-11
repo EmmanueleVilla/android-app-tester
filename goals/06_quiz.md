@@ -1,1 +1,0 @@
-Successfully complete a quiz.

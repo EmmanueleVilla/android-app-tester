@@ -1,0 +1,7 @@
+- step: "Navigate to the Compendium using manual click"
+  type: manual
+  action: "click id"
+  id: "bottom_bar_item_compendio"
+
+- step: "Find and open the entry for the \"A1\" glyph (man seated). Then close the popup."
+  type: prompting

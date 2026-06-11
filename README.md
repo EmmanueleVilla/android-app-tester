@@ -8,6 +8,7 @@ Specifically configured out-of-the-box to explore the educational app **MiuLingo
 
 ## Key Features
 - **Flexible LLM Integration**: Run locally using Ollama (e.g., `qwen3:8b`) or connect to remote OpenAI-compatible completion APIs.
+- **Mixed Testing Support**: Support for both YAML-based **manual** (e.g., click ID directly) and **prompting** (delegating decision-making to the LLM) testing goals.
 - **Robust Configuration**: Layered configuration system using standard environment variables (`.env`), local JSON overrides (`config.local.json`), and default config templates.
 - **Pre-flight Checks**: Automated validations to verify ADB installation, connected Android devices, and configuration completeness before launching.
 - **Modular Architecture**: Clean, separate concerns for ADB operations, XML layout parsing, LLM queries, and loop orchestration.
@@ -21,16 +22,19 @@ The agent runs in a continuous loop, analyzing screen layouts and directing the 
 ```mermaid
 graph TD
     A[Start main.py] --> B[Perform Pre-flight Checks]
-    B -->|Passed| C[Load Goals]
+    B -->|Passed| C[Load YAML Goals]
     C --> D[ADB: Dump XML layout]
     D --> E[Parser: Extract interactive nodes]
-    E --> F[LLM: Decide next action]
-    F -->|Action: tap/swipe/type/back| G[ADB: Inject action to screen]
-    G --> H[Wait 2s] --> D
-    F -->|Action: goal_completed| I[Move to Next Goal]
-    I --> D
-    F -->|Action: test_failed| J[Halt & Report Failure]
-    B -->|Failed| K[Exit Code 1]
+    E --> F{Goal Type?}
+    F -->|manual| G[Click ID Directly]
+    G --> H[Move to Next Goal]
+    H --> D
+    F -->|prompting| I[LLM: Decide next action]
+    I -->|Action: tap/swipe/type/back| J[ADB: Inject action to screen]
+    J --> K[Wait 2s] --> D
+    I -->|Action: goal_completed| H
+    I -->|Action: test_failed| L[Halt & Report Failure]
+    B -->|Failed| M[Exit Code 1]
 ```
 
 ---
@@ -86,6 +90,44 @@ Open `.env` in a text editor and fill in your settings:
 
 ---
 
+## YAML Goals Configuration
+
+Each goal file in the `goals/` folder contains a sequence (list) of testing steps. Each step (row) can be either **manual** or **prompting**, enabling fully mixed testing.
+
+### 1. Manual Steps (`type: manual`)
+Directly executes predefined ADB interactions on specific elements matching their resource IDs without invoking the LLM. Currently supports the `click id` action:
+
+```yaml
+- step: "Open the Compendium section of the app"
+  type: manual
+  action: "click id"
+  id: "bottom_bar_item_compendio"
+```
+
+### 2. Prompting Steps (`type: prompting`)
+Orchestrates AI-driven exploration. The layout information and step description are passed directly to the LLM to decide the sequence of actions:
+
+```yaml
+- step: "Identify and visit all main sections of the app using the bottom_bar buttons"
+  type: prompting
+```
+
+### Mixed Example
+Steps can be combined in a single file to execute mixed manual and prompting pipelines:
+
+```yaml
+# goals/02_find_glyph.yaml
+- step: "Navigate to the Compendium using manual click"
+  type: manual
+  action: "click id"
+  id: "bottom_bar_item_compendio"
+
+- step: "Find and open the entry for the A1 glyph, then close it"
+  type: prompting
+```
+
+---
+
 ## Running the Agent
 
 To run all sequential goals in the `goals/` folder:
@@ -93,9 +135,9 @@ To run all sequential goals in the `goals/` folder:
 python main.py
 ```
 
-To run a specific goal file (e.g., `02_find_glyph.md`):
+To run a specific goal file (e.g., `02_find_glyph.yaml`):
 ```bash
-python main.py 02_find_glyph.md
+python main.py 02_find_glyph.yaml
 ```
 
 ---
@@ -106,7 +148,7 @@ python main.py 02_find_glyph.md
 ├── main.py                  # Entry orchestrator and main execution loop
 ├── .env.example             # Environment variable setup template
 ├── requirements.txt         # Project dependencies
-├── goals/                   # Directory containing exploration goal files
+├── goals/                   # Directory containing exploration YAML goal files
 ├── prompts/                 # LLM context and system prompt templates
 │   ├── APP_CONTEXT.md       # Target app background context
 │   └── EXPLORATION_PROMPT.md# Base strategic guidelines for the LLM
