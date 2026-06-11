@@ -1,0 +1,1 @@
+Open the character section, select Nilo and change some of his colors. Then scroll down and press the reset button.

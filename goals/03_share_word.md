@@ -1,0 +1,1 @@
+Create the word X1:F4-C7 in the Builder and press share. You may need to clear the text before writigin. Consider it completed when you see the Operating system share popup ids.
