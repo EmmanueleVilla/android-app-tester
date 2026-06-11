@@ -2,7 +2,7 @@
 
 An automated agent designed to explore and test Android applications using ADB (Android Debug Bridge), XML layout parsing, and Large Language Models (LLMs) like Ollama and OpenAI-compatible APIs. 
 
-Specifically configured out-of-the-box to explore the educational app **HieroLingo** (`com.shadowings.gero`), which teaches Egyptian hieroglyphs.
+Specifically configured out-of-the-box to explore the educational app **MiuLingo** (`com.shadowings.gero`), which teaches Egyptian hieroglyphs.
 
 ---
 
@@ -42,7 +42,7 @@ graph TD
 1. **Python 3.8+**
 2. **Android SDK Platform-Tools**: Ensure `adb` is installed and available in your shell's `PATH`.
 3. **Android Device / Emulator**: USB debugging must be enabled, and the device authorized.
-4. **Ollama (Optional)**: For local inference. Install [Ollama](https://ollama.ai/) and run `ollama pull qwen3:8b`.
+4. **Ollama (Optional)**: For local inference. Install [Ollama](https://ollama.ai/) and run `ollama pull [the model you want to use]`.
 
 ### Installation
 
@@ -66,7 +66,7 @@ graph TD
 ### Device Setup
 Ensure your Android device or emulator is:
 1. Connected via ADB (`adb devices` should show a `device`).
-2. Displaying the landing/starting screen of the target application (e.g. HieroLingo).
+2. Displaying the landing/starting screen of the target application (e.g. MiuLingo).
 
 ---
 
@@ -122,4 +122,9 @@ python main.py 02_find_glyph.md
 
 ## Contributing
 Contributions are welcome! Please fork this repository and submit a pull request with any improvements, such as enhanced scroll/swipe logic, broader app support, or better error resilience.
-# android-app-tester
+
+## Future improvements
+- **Enhanced Action Logic**: Implement smarter scrolling/swiping to handle long lists and nested views.
+- **Error Handling**: Add more robust error handling and recovery strategies for unexpected app states or ADB issues.
+- **State Management**: Implement a more sophisticated state tracking system to avoid redundant actions and improve exploration efficiency.
+- **Reporting and Analytics**: Build a reporting system to log exploration paths, successes, and failures for analysis and debugging.
